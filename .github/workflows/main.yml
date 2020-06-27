@@ -1,0 +1,54 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Install deps
+      run: |
+        brew install cmake qt5 pkg-config
+
+    - name: Build
+      run: |
+        echo $(brew --prefix qt5)
+        mkdir build
+        cd build
+        cmake .. -DQTDIR=$(brew --prefix qt5)
+        make -j
+
+
+    - name: Install Apple certificates
+      uses: apple-actions/import-codesign-certs@v1
+      with:
+        p12-filepath: ci/macos/certs.p12
+        p12-password: sQgAXwmzU2uF
+
+    - name: Deploy
+      run: |
+        $(brew --prefix qt5)/bin/macdeployqt ./build/src/app/NameTag.app -verbose=3 -codesign="Apple Development: shanikacj@gmail.com (FMUV3GPC7H)" -qmldir=./
+
+    - name: Copy Artifacts
+      run: |
+        mkdir -p artifacts
+        cp -r build/src/app/NameTag.app artifacts/
+
+    - name: Upload Raw Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: artifacts
+        path: artifacts
