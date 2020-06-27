@@ -40,12 +40,12 @@ jobs:
 
     - name: Deploy
       run: |
-        $(brew --prefix qt5)/bin/macdeployqt ./build/src/app/NameTag.app -verbose=3 -codesign="Apple Development: shanikacj@gmail.com (FMUV3GPC7H)" -qmldir=./
+        $(brew --prefix qt5)/bin/macdeployqt ./build/NameTag.app -verbose=3 -codesign="Apple Development: shanikacj@gmail.com (FMUV3GPC7H)" -qmldir=./
 
     - name: Copy Artifacts
       run: |
         mkdir -p artifacts
-        cp -r build/src/app/NameTag.app artifacts/
+        cp -r build/NameTag.app artifacts/
 
     - name: Upload Raw Artifacts
       uses: actions/upload-artifact@v1
