@@ -41,7 +41,7 @@ jobs:
     - name: Deploy
       run: |
         $(brew --prefix qt5)/bin/macdeployqt ./build/NameTag.app -verbose=3 -codesign="Apple Development: shanikacj@gmail.com (FMUV3GPC7H)" -qmldir=./
-        chmod a+x ./build/Contents/MacOS/NameTag
+        chmod a+x ./build/NameTag.app/Contents/MacOS/NameTag
 
     - name: Copy Artifacts
       run: |
